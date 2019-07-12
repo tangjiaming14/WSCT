@@ -112,3 +112,14 @@ def matrix_to_1D(A):   #将2维矩阵变为1维，一列一列添加
             a.append(A[j][i])
 
     return a
+
+def sum_diag(A):           #计算矩阵对角线的和
+    m = np.size(A, 0)
+    n = np.size(A, 1)
+    sum = 0
+    for i in range(m):
+        for j in range(n):
+            if i == j:
+                sum = sum + A[i, j]
+
+    return sum
