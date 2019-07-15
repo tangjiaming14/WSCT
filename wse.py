@@ -14,13 +14,14 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
     n = numpy.size(Wt, 0)
     wlbl_t = numpy.unique(wlbl_values)
     is_converge = False
-    t = 1
+    t = 0
     obj = numpy.ones((itr,1))*0
     obj1 = numpy.ones((itr,1))*0
     obj2 = numpy.ones((itr,1))*0
     CtA = {}
 
     while t < itr and is_converge == False:
+
         [obj[t,0], obj1[t,0], obj2[t,0]] = obj_wse(lambdas, Wt, L, wlbl_values)
 
         if t > 1:
@@ -34,6 +35,15 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
                 break
 
         # update eta
+        while obj[t, 0] > obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
+            eta = eta * gamma
+            print('updating eta = ', eta)
+
+        Wprev = Wt
+        # update V
+        V = Wt - eta * (2*L*numpy.matrix(Wt))
+
+
 
         is_converge = True
 
@@ -47,7 +57,7 @@ def obj_wse(lambdas, Wt, L, wlbl_values):
     tem = Wt.T*L
     tem2 = numpy.dot(tem, Wt)
     obj1 = numpy.trace(tem2)
-    #print(obj1)
+    #print('wse_obj1',obj1)
     wlbl_t = numpy.unique(wlbl_values)
     obj2_ = numpy.ones((numpy.size(wlbl_t,0),1))*0         #n*1,全为0的矩阵
     #print(obj2_)
@@ -59,11 +69,11 @@ def obj_wse(lambdas, Wt, L, wlbl_values):
         temp = numpy.matrix(Wt[gind, ])                                      #图片数据没有完全放入，超出边界，解决，将test所有数据加入
         temp1 = temp.T * Cg
         trace = numpy.trace(numpy.dot(temp1, temp))
-        print(trace)
+        #print(trace)
         obj2_[i, 0] = n/( numpy.size(wlbl_t)* ng)*trace
 
     obj2 = sum(obj2_)
-    print(obj2)
+    #print('wse_obj2',obj2)
     obj = obj1 + lambdas * obj2
     return obj, obj1, obj2
 
@@ -72,6 +82,8 @@ def obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
     wlbl_t = numpy.unique(wlbl_values)
     obj2_ = numpy.ones((numpy.size(wlbl_t,0),1))*0         #n*1,全为0的矩阵
 
+    wlbl_values = mt.matrix_to_1D(wlbl_values)
+
     for i in range(numpy.size(wlbl_t)):
         gind = numpy.argwhere(wlbl_values == wlbl_t[i])
         ng = numpy.size(gind)
@@ -79,11 +91,13 @@ def obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
         temp = numpy.matrix(V[gind, ])
         temp1 = temp.T * Cg
         trace = numpy.trace(numpy.dot(temp1, temp))
-        print(trace)
+        #print(trace)
         obj2_[i, 0] = n/( numpy.size(wlbl_t)* ng)*trace
 
     obj2 = sum(obj2_)
 
-    obj = 1
+    gg1 = numpy.matrix(Wt - V)
+    obj = numpy.trace(numpy.matrix(Wt.T)*L*numpy.matrix(Wt)) + \
+          numpy.trace( gg1.T* numpy.matrix(2*L*V) ) + mt.sum_diag(gg1.T*gg1) / (2*eta) + lambdas *obj2
 
     return obj

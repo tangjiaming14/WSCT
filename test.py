@@ -5,6 +5,7 @@ import numpy
 import scipy.sparse as ss
 from scipy import linalg
 import pandas as pd
+import wse
 
 save_A_path = './A.pkl'
 save_L_path = './L.pkl'
@@ -21,21 +22,13 @@ V = Wt
 n = numpy.size(V, 0)
 wlbl_reader = pd.read_csv(wlbl_path)
 wlbl_values = wlbl_reader.values
-wlbl_values = mt.matrix_to_1D(wlbl_values)
 
-wlbl_t = numpy.unique(wlbl_values)
+[objj, objj2, objj3] = wse.obj_wse(lambdas, Wt, L_value, wlbl_values)
+print(objj)
 
-gind = numpy.argwhere(wlbl_values == wlbl_t[0])
-gind = mt.matrix_to_1D(gind)
-ng = numpy.size(gind)
-Cg = numpy.identity(ng) - (numpy.ones((ng,ng))/ng)
-temp = numpy.matrix(V[gind, ])
-temp1 = temp.T * Cg
-trace = numpy.trace(numpy.dot(temp1, temp))
-print(trace)
-obj2 = n/( numpy.size(wlbl_t)* ng)*trace
-print(obj2)
-
-obj = numpy.trace(Wt.T*L_value*Wt) + \
-      numpy.trace( numpy.matrix((Wt-V).T)* (2*L_value*V) ) + sum(mt.sum_diag((Wt-V).T*(Wt-V))) / (2*eta) + lambdas *obj2
+obj = wse.obj_QL(Wt, V, lambdas, L_value, eta, wlbl_values)
 print(obj)
+#print(1)
+
+if objj > obj:
+    print('false')
