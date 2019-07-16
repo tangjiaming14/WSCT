@@ -6,6 +6,8 @@ import scipy.sparse as ss
 from scipy import linalg
 import pandas as pd
 import wse
+import liteKmeans
+from scipy.cluster.vq import *
 
 save_A_path = './A.pkl'
 save_L_path = './L.pkl'
@@ -16,19 +18,17 @@ eta = 0.1
 
 with open(save_L_path,'rb') as f:       #获取L数据
     L_value = pickle.load(f)
+k = 2
 
-Wt = linalg.orth(numpy.random.random(size=(3589,2)))    #随机生成image_num*outdim的0~1的矩阵，再求他的正交基W0
+Wt = linalg.orth(numpy.random.random(size=(3589,k)))    #随机生成image_num*outdim的0~1的矩阵，再求他的正交基W0
 V = Wt
 n = numpy.size(V, 0)
 wlbl_reader = pd.read_csv(wlbl_path)
 wlbl_values = wlbl_reader.values
+wlbl_values = mt.matrix_to_1D(wlbl_values)
+wlbl_t = numpy.unique(wlbl_values)
 
-[objj, objj2, objj3] = wse.obj_wse(lambdas, Wt, L_value, wlbl_values)
-print(objj)
-
-obj = wse.obj_QL(Wt, V, lambdas, L_value, eta, wlbl_values)
-print(obj)
-#print(1)
-
-if objj > obj:
-    print('false')
+code,distance = liteKmeans.Kmeans(Wt,k)
+ct = {}
+ct[1] = code
+print(ct)

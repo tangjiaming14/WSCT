@@ -94,6 +94,17 @@ def sum_by_row(A, n):         #计算每一行的数值和
         a[i,0] = row_sum
     return a
 
+def sum_by_column(A):         #计算每一列的数值和
+    m = np.size(A, 0)
+    n = np.size(A, 1)
+    a = np.ones((1,n))*0
+    for i in range(n):
+        column_sum = 0
+        for j in range(m):
+            column_sum = column_sum + A[j, i]
+        a[0,i] = column_sum
+    return a
+
 def mul_by_pos(A, B, n):         # 将AB对角线的值相乘，其余位是A的值
     a = np.ones((n,n))*0
     result = ss.lil_matrix(a)

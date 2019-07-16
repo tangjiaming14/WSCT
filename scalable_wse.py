@@ -14,6 +14,7 @@ save_L_path = './L.pkl'
 
 wlbl_reader = pd.read_csv(wlbl_path)    #获取wlbl数据
 wlbl_values = wlbl_reader.values
+wlbl_values = mt.matrix_to_1D(wlbl_values)
 
 with open(save_A_path,'rb') as f:       #获取相似矩阵A数据
     A_value = pickle.load(f)
@@ -74,3 +75,5 @@ elif optimizer == 'agd':
 #存储L
 #g = open(save_L_path, 'wb')
 #pickle.dump(L,g)
+
+#存储CtA， Wt， V， obj

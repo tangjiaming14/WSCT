@@ -1,12 +1,14 @@
 import myTools as mt
 import numpy
+from scipy import linalg
+import liteKmeans
 
 def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt):
 
     #get config
     is_log = mt.get_field(log_opt, 'is_log', False)
     num_clusters = mt.get_field(log_opt, 'num_clusters', 2)
-    disp_steps = mt.get_field(log_opt, 'disp_steps', 1)
+    disp_steps = mt.get_field(log_opt, 'disp_steps', 2)
 
     #Init
     a0 = 1
@@ -43,10 +45,48 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
         # update V
         V = Wt - eta * (2*L*numpy.matrix(Wt))
 
+        if speedup == 'standard':
+            for i in range(numpy.size(wlbl_t)):
+                gind = mt.matrix_to_1D(numpy.argwhere(wlbl_values == wlbl_t[0]))
+                ng = numpy.size(gind)
+                Cg = numpy.identity(ng) - (numpy.ones((ng,ng))/ng)
+                temp = 2*lambdas*eta*n / (ng*numpy.size(wlbl_t)*Cg)
+                Wt[gind, ] = numpy.identity(ng) + numpy.matrix(V[gind, ])/temp
+        elif speedup == 'fast':
+            for i in range(numpy.size(wlbl_t)):
+                gind = mt.matrix_to_1D(numpy.argwhere(wlbl_values == wlbl_t[0]))
+                ng = numpy.size(gind)
+                beta = 2*lambdas*eta*n / (ng*numpy.size(wlbl_t))
 
+                # spead up version with closed-form update
 
-        is_converge = True
+                beta_a = beta + 1
+                beta_b = -beta / ng
+                t1 = numpy.matrix(V[gind, ])
+                temp = numpy.matrix(numpy.tile(mt.sum_by_column(t1), (ng, 1)))           #未测试
+                Wt[gind, ] = 1/beta_a*numpy.matrix(V[gind, ]) - beta_b/(beta_a*(beta_a+beta_b*ng))*temp
 
+        # 1: reuglard gradient descent update
+	    #Wt = Wprev - gamma * Wt;
+
+        # 2: accelerated gradient descent update
+        at = 2 / (t+3)
+        delta = Wt - Wprev
+        Wt = Wt + (1-a0)/a0*at*delta
+        a0 = at
+        Wt = linalg.orth(Wt)
+
+        # Get cluster results
+        if is_log and optimizer == 'agd':
+            ct, d = liteKmeans.Kmeans(Wt, num_clusters)
+            CtA[t] = ct
+
+        #display
+        if t % disp_steps == 0:
+            print('Iter#%4d, obj=%.4f, obj1=%.4f, obj2=%.4f', t, obj[t,0], obj1[t,0], obj2[t,0])
+
+        t = t + 1
+        #is_converge = True
     return [CtA, Wt, V, obj, obj1, obj2]
 
 
@@ -61,7 +101,7 @@ def obj_wse(lambdas, Wt, L, wlbl_values):
     wlbl_t = numpy.unique(wlbl_values)
     obj2_ = numpy.ones((numpy.size(wlbl_t,0),1))*0         #n*1,全为0的矩阵
     #print(obj2_)
-    wlbl_values = mt.matrix_to_1D(wlbl_values)      #将二维标签数组n*1变为一位数组n
+    #wlbl_values = mt.matrix_to_1D(wlbl_values)      #将二维标签数组n*1变为一位数组n
     for i in range(numpy.size(wlbl_t)):
         gind = numpy.argwhere(wlbl_values == wlbl_t[i])
         ng = numpy.size(gind)
@@ -82,7 +122,7 @@ def obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
     wlbl_t = numpy.unique(wlbl_values)
     obj2_ = numpy.ones((numpy.size(wlbl_t,0),1))*0         #n*1,全为0的矩阵
 
-    wlbl_values = mt.matrix_to_1D(wlbl_values)
+    #wlbl_values = mt.matrix_to_1D(wlbl_values)
 
     for i in range(numpy.size(wlbl_t)):
         gind = numpy.argwhere(wlbl_values == wlbl_t[i])
