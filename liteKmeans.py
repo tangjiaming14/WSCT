@@ -4,4 +4,4 @@ def Kmeans(Wt, k):
     features = whiten(Wt)
     centroids,distortion = kmeans(features,k)
     code,distance = vq(features,centroids)
-    return code, distance
+    return code, centroids

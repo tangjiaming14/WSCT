@@ -2,19 +2,24 @@ import config
 import pickle
 import myTools as mt
 import numpy
+from pylab import *
 import scipy.sparse as ss
 from scipy import linalg
 import pandas as pd
 import wse
-import liteKmeans
-from scipy.cluster.vq import *
 
+import liteKmeans
+from matplotlib.font_manager import FontProperties
+font = FontProperties(fname=r"c:\windows\fonts\SimSun.ttc", size=14)
 save_A_path = './A.pkl'
 save_L_path = './L.pkl'
 wlbl_path = './data/fer2013/wlbl_clu.csv'
 
 lambdas = 0.3413
 eta = 0.1
+speedup = 'fast'
+optimizer = 'agd'
+log_opt = {}
 
 with open(save_L_path,'rb') as f:       #获取L数据
     L_value = pickle.load(f)
@@ -28,7 +33,6 @@ wlbl_values = wlbl_reader.values
 wlbl_values = mt.matrix_to_1D(wlbl_values)
 wlbl_t = numpy.unique(wlbl_values)
 
-code,distance = liteKmeans.Kmeans(Wt,k)
-ct = {}
-ct[1] = code
-print(ct)
+[CtA, Wt, V, obj, obj1, obj2] = wse.wse(L_value, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
+print(len(CtA))
+print(CtA[len(CtA)-1])

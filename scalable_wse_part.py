@@ -38,30 +38,31 @@ gamma = mt.get_field(config, 'gamma', 0.9)
 
 assert lambdas != 0, 'lambda=0'
 
-# Calculate degree matrix
-degs = mt.sum_by_row(A_value, image_num)
+with open(save_L_path,'rb') as f:       #获取L数据
+    L = pickle.load(f)
 
-a = np.ones((image_num,image_num))*0
-D = ss.lil_matrix(a)                                                 #有限图的度矩阵D
-for i in range(image_num):
-    D[i, i] = degs[i]
+# Init
+W0 = linalg.orth(np.random.random(size=(image_num,outdim)))    #随机生成image_num*outdim的0~1的矩阵，再求他的正交基W0
+Wt = W0
+V = Wt
 
-L = D - A_value                                                     #计算拉普拉斯矩阵L=D-A
-#print(L)
-# Compute normalized Laplacian if needed
-if type_lap == 'norm':
-    # avoid dividing by zero
-    for i in range(image_num):
-        if degs[i] == 0:
-            degs[i] = 2.2204e-16
-    #calculate ingerse of D
-    for i in range(image_num):
-        D[i, i] = 1/degs[i]
-    #calculate normalized Laplacian
-    L = mt.mul_by_pos(L, D, image_num)                          #L对角线为1 其他位是之前的矩阵值
+if optimizer == 'sgd':
+    n = image_num
 
-#存储数据
-#存储L
-g = open(save_L_path, 'wb')
-pickle.dump(L,g)
 
+elif optimizer == 'agd':
+    [CtA, Wt, V, obj, obj1, obj2] = wse.wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
+
+
+
+# display
+
+num = len(CtA) - 1
+figure()
+ndx = where(CtA[num] == 0)[0]
+plot(Wt[ndx, 0], Wt[ndx, 1], '*')
+ndx = where(CtA[num] == 1)[0]
+plot(Wt[ndx, 0], Wt[ndx, 1], 'r.')
+title(u'2维数据点聚类', fontproperties=font)
+axis('off')
+show()

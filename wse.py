@@ -6,9 +6,9 @@ import liteKmeans
 def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt):
 
     #get config
-    is_log = mt.get_field(log_opt, 'is_log', False)
+    is_log = mt.get_field(log_opt, 'is_log', True)
     num_clusters = mt.get_field(log_opt, 'num_clusters', 2)
-    disp_steps = mt.get_field(log_opt, 'disp_steps', 2)
+    disp_steps = mt.get_field(log_opt, 'disp_steps', 5)
 
     #Init
     a0 = 1
@@ -27,14 +27,14 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
         [obj[t,0], obj1[t,0], obj2[t,0]] = obj_wse(lambdas, Wt, L, wlbl_values)
 
         if t > 1:
-            if abs(obj(t) - obj(t-1)) < 1e-5:
+            if abs(obj[t,0] - obj[t-1,0]) < 1e-5:
                 print('Quitting: obj stop changing')
                 is_converge = True
                 break
-            elif obj(t) > obj(t-1):
-                print('Quitting: obj start increasing')
-                is_converge = True
-                break
+            #elif obj[t,0] > obj[t-1,0]:
+                #print('Quitting: obj start increasing')
+               # is_converge = True
+                #break
 
         # update eta
         while obj[t, 0] > obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
@@ -83,16 +83,17 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
 
         #display
         if t % disp_steps == 0:
-            print('Iter#%4d, obj=%.4f, obj1=%.4f, obj2=%.4f', t, obj[t,0], obj1[t,0], obj2[t,0])
+            print('Iter#  ',t,' obj=',obj[t,0], ' obj1=',obj1[t,0], ' obj2=',obj2[t,0])
 
         t = t + 1
         #is_converge = True
+    print('WSE: stop at iter = ', t)
     return [CtA, Wt, V, obj, obj1, obj2]
 
 
 def obj_wse(lambdas, Wt, L, wlbl_values):
     n = numpy.size(Wt, 0)
-
+    m = numpy.size(Wt, 1)
     # compute the objective function
     tem = Wt.T*L
     tem2 = numpy.dot(tem, Wt)
@@ -119,6 +120,7 @@ def obj_wse(lambdas, Wt, L, wlbl_values):
 
 def obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
     n = numpy.size(V, 0)
+    m = numpy.size(V, 1)
     wlbl_t = numpy.unique(wlbl_values)
     obj2_ = numpy.ones((numpy.size(wlbl_t,0),1))*0         #n*1,全为0的矩阵
 
@@ -128,7 +130,9 @@ def obj_QL(Wt, V, lambdas, L, eta, wlbl_values):
         gind = numpy.argwhere(wlbl_values == wlbl_t[i])
         ng = numpy.size(gind)
         Cg = numpy.identity(ng) - (numpy.ones((ng,ng))/ng)
-        temp = numpy.matrix(V[gind, ])
+        #a = V[gind, ].reshape(ng, m)
+        #print(a.shape)
+        temp = numpy.matrix(V[gind, ].reshape(ng, m))
         temp1 = temp.T * Cg
         trace = numpy.trace(numpy.dot(temp1, temp))
         #print(trace)
