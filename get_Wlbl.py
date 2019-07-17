@@ -20,11 +20,13 @@ wlbl = mt.perturb_labels(test_values, psnr)    #获取弱注释标签
 
 print(wlbl)
 #存储wlbl
+
 save = pd.DataFrame(list(wlbl))
 try:
     save.to_csv(wlbl_path, index = False)
 except UnicodeEncodeError:
     print("编码错误, 该数据无法写到文件中, 直接忽略该数据")
+
 
 
 

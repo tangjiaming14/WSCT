@@ -62,6 +62,10 @@ if type_lap == 'norm':
 
 #存储数据
 #存储L
-g = open(save_L_path, 'wb')
-pickle.dump(L,g)
+try:
+    g = open(save_L_path, 'wb')
+    pickle.dump(L,g)
+    g.close()
+except e:
+        print('存储错误', e)
 

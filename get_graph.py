@@ -11,6 +11,7 @@ import pickle
 np.seterr(divide='ignore',invalid='ignore')
 
 save_A_path = './A.pkl'
+save_feat_path = './result/feat.pkl'
 
 imlist = imtools.get_imlist('./data/fer2013/cluTest/')
 imnbr = len(imlist)
@@ -77,6 +78,9 @@ if nn_opt == 'pdist':
         pickle.dump(A,f)
         pickle.dump(n,f)
         f.close()
+        g = open(save_feat_path, 'wb')
+        pickle.dump(projected,g)
+        g.close()
     except e:
         print('存储错误', e)
 

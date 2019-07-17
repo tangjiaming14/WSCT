@@ -1,3 +1,4 @@
+from pylab import *
 import numpy as np
 import scipy.sparse as ss
 import math
@@ -76,7 +77,7 @@ def perturb_labels(labels, psnr):     #污染真实数据得到弱注释数据
         perturb_idx = get_randomInt(0, n, num_perturb)
 
         for j in range(len(perturb_idx)):
-            perturbed_labels[idx[perturb_idx[i]]] = perturb_class_ids[j, 0]
+            perturbed_labels[idx[perturb_idx[j]]] = perturb_class_ids[j, 0]
     return perturbed_labels
 
 def get_field(config, key, default):   #获取config的值
@@ -134,3 +135,48 @@ def sum_diag(A):           #计算矩阵对角线的和
                 sum = sum + A[i, j]
 
     return sum
+
+def change_to_matrix(A):     #将奇奇怪怪的数据类型都变为二维矩阵
+    m = np.size(A, 0)
+    n = np.size(A, 1)
+    a = a = np.ones((m,n))
+    for i in range(m):
+        for j in range(n):
+            a[i, j] = A[i, j]
+    return a
+
+def plot_sample(feat, label):    #与matlab相似
+    class_ids = unique(label)
+    for i in range(size(class_ids)):
+        class_id = class_ids[i]
+        class_ind = where(label==class_id)[0]
+        xx = feat[class_ind,0]
+        yy = feat[class_ind,1]
+        if mean(yy)<0:
+            for j in range(size(xx)):
+                plot(xx[j], yy[j], 'y.')
+        else:
+            for j in range(len(xx)):
+                plot(xx[j], yy[j], 'b.')
+        axis('off')
+
+def plot_sample2(feat, label):        #多个颜色
+    class_ids = unique(label)
+    color = ['y.', 'b.', 'r.', 'g.', 'm.', 'c.', 'k.']
+    for i in range(size(class_ids)):
+        class_id = class_ids[i]
+        class_ind = where(label==class_id)[0]
+        xx = feat[class_ind,0]
+        yy = feat[class_ind,1]
+        for j in range(size(xx)):
+            plot(xx[j], yy[j], color[i])
+        axis('off')
+
+def accuracy(A, B):
+    num = len(A)
+    count = 0
+    for i in range(num):
+        if A[i] == B[i]:
+            count +=1
+    acc = count/num
+    return acc

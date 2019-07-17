@@ -4,6 +4,9 @@ from PIL import Image, ImageDraw
 from pylab import *
 from scipy.cluster.vq import *
 import numpy as np
+from matplotlib.font_manager import FontProperties
+
+font = FontProperties(fname=r"c:\windows\fonts\SimSun.ttc", size=14)
 
 np.seterr(divide='ignore',invalid='ignore')
 
@@ -17,7 +20,7 @@ V, S, immean = pca.pca(immatrix)
 # Project on 2 PCs.
 #projected = array([dot(V[[0, 1]], immatrix[i] - immean) for i in range(imnbr)])  # P131 Fig6-3左图
 #projected = array([dot(V[[1, 2]], immatrix[i] - immean) for i in range(imnbr)])  # P131 Fig6-3右图
-projected = array([dot(V[:40],immatrix[i]-immean) for i in range(imnbr)])
+projected = array([dot(V[:1],immatrix[i]-immean) for i in range(imnbr)])
 
 n = len(projected)
 # compute distance matrix
@@ -43,10 +46,13 @@ for c in range(k):
     ind = where(code==c)[0]
     figure()
     gray()
+    tit = 'c='+str(c)
+    title(tit, fontproperties=font)
     for i in range(minimum(len(ind),39)):
         im = Image.open(imlist[ind[i]])
         subplot(4,10,i+1)
         imshow(array(im))
         axis('equal')
+
         axis('off')
 show()

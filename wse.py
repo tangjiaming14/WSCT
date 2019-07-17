@@ -7,7 +7,7 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
 
     #get config
     is_log = mt.get_field(log_opt, 'is_log', True)
-    num_clusters = mt.get_field(log_opt, 'num_clusters', 2)
+    num_clusters = mt.get_field(log_opt, 'num_clusters', 7)
     disp_steps = mt.get_field(log_opt, 'disp_steps', 5)
 
     #Init
