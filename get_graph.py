@@ -33,7 +33,7 @@ if nn_opt == 'pdist':
     #Create directed neighbor graph
 
     # compute distance matrix
-    S = array([[ sqrt(sum((projected[i]-projected[j])**2))
+    S = array([[ sqrt(sum((projected[i]-projected[j])**2))       #3589*3589
               for i in range(n) ] for j in range(n)], 'f')
 
     graph_type = 'mutual_knn'
