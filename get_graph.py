@@ -42,8 +42,9 @@ if nn_opt == 'pdist':
 
     for irow in range(n):              #将距离从小到大排序，选取最小的k个索引在isnn中赋值为1
         idx = S[irow,:].argsort()
-        isnn[irow, idx[1:k+1]] = 1
-
+        for i in range(size(idx)):
+            if idx[i] < k:
+                isnn[irow, i] = 1
     #print('yes')
 
     a = np.ones((n,n))*0

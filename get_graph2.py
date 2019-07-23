@@ -11,7 +11,7 @@ import pickle
 
 np.seterr(divide='ignore',invalid='ignore')
 
-IMAGE_SIZE = 160 # 指定图像大小
+IMAGE_SIZE = 160 # 指定图像大小  use Facenet
 
 def resize_image(image, height = IMAGE_SIZE, width = IMAGE_SIZE):
     top, bottom, left, right = (0,0,0,0)
