@@ -29,7 +29,7 @@ with open(save_A_path,'rb') as f:       #获取相似矩阵A数据
 
 config = config.get_config('wse', 'toy') #获取配置
 
-outdim = mt.get_field(config, 'embedding_dim', 7)
+outdim = mt.get_field(config, 'embedding_dim', 2)
 type_lap = mt.get_field(config, 'type_laplacian', 'norm')
 speedup = mt.get_field(config, 'speedup', 'fast')
 optimizer = mt.get_field(config, 'optimizer', 'agd')
@@ -47,8 +47,8 @@ with open(save_L_path,'rb') as f:       #获取L数据
 
 # Init
 W0 = linalg.orth(np.random.random(size=(image_num,outdim)))    #随机生成image_num*outdim的0~1的矩阵，再求他的正交基W0
-Wt = W0
-V = Wt
+Wt = copy(W0)
+V = copy(Wt)
 
 if optimizer == 'sgd':
     n = image_num
@@ -62,6 +62,7 @@ try:
     g = open(savr_result_path, 'wb')
     pickle.dump(CtA,g)
     pickle.dump(obj,g)
+    pickle.dump(Wt,g)
     g.close()
 except e:
         print('存储错误', e)

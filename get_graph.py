@@ -23,7 +23,7 @@ V, S, immean = pca.pca(immatrix)
 # Project on 2 PCs.
 #projected = array([dot(V[[0, 1]], immatrix[i] - immean) for i in range(imnbr)])  # P131 Fig6-3左图
 #projected = array([dot(V[[1, 2]], immatrix[i] - immean) for i in range(imnbr)])  # P131 Fig6-3右图
-projected = array([dot(V[:10],immatrix[i]-immean) for i in range(imnbr)])    #463*40 = n*40
+projected = array([dot(V[:40],immatrix[i]-immean) for i in range(imnbr)])    #463*40 = n*40
 n = len(projected)
 
 nn_opt = 'pdist'
@@ -37,7 +37,7 @@ if nn_opt == 'pdist':
               for i in range(n) ] for j in range(n)], 'f')
 
     graph_type = 'mutual_knn'
-    k = 100   #构建图的最近邻居数
+    k = 300   #构建图的最近邻居数
     isnn = np.ones((n,n))*0
 
     for irow in range(n):              #将距离从小到大排序，选取最小的k个索引在isnn中赋值为1

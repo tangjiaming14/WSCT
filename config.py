@@ -8,7 +8,7 @@ def get_config(alg, dataset):
             config['speedup'] = 'fast'
             config['epoch'] = 50
             config['graph_partition'] = 2
-            config['lambda'] = 0.3413
+            config['lambda'] = 1
             config['log_opt.is_log'] = True
             config['log_opt.num_clusters'] = 2
             config['log_opt.disp_steps'] = 5

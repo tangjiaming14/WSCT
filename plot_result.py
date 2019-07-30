@@ -9,13 +9,15 @@ font = FontProperties(fname=r"c:\windows\fonts\SimSun.ttc", size=14)
 
 wlbl_path = './data/fer2013/wlbl_clu.csv'
 savr_result_path = './result/result.pkl'
-csv_path = './data/fer2013/test.csv'
+#csv_path = './data/fer2013/test.csv'
 save_feat_path = './result/feat.pkl'
+labels_path = './data/fer2013/labels_clu.csv'
 
 #获取wse结果
 with open(savr_result_path,'rb') as f:
     CtA = pickle.load(f)
     obj = pickle.load(f)
+    Wt = pickle.load(f)
 
 #获取原始特征数据
 with open(save_feat_path,'rb') as f:
@@ -23,8 +25,9 @@ with open(save_feat_path,'rb') as f:
 n = len(projected)
 
 #获取原始label数据
-test_reader = pd.read_csv(csv_path,usecols=['emotion'])     #读取emotion的数据
+test_reader = pd.read_csv(labels_path)     #读取emotion的数据
 label_value = test_reader.values
+label_value = mt.matrix_to_1D(label_value)
 
 iters = len(CtA) #获取迭代次数
 
@@ -46,6 +49,7 @@ subplot(133)
 mt.plot_sample(pro, label_value)
 show()
 
-print(mt.accuracy(wlbl_values, CtA[iters-1]))
+ol = iters-1
+print(mt.accuracy(wlbl_values, CtA[ol]))
 print(mt.accuracy(wlbl_values, label_value))
-print(mt.accuracy(label_value, CtA[iters-1]))
+print(mt.accuracy(label_value, CtA[ol]))

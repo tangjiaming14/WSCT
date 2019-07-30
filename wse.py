@@ -7,7 +7,7 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
 
     #get config
     is_log = mt.get_field(log_opt, 'is_log', True)
-    num_clusters = mt.get_field(log_opt, 'num_clusters', 7)
+    num_clusters = mt.get_field(log_opt, 'num_clusters', 2)
     disp_steps = mt.get_field(log_opt, 'disp_steps', 5)
 
     #Init
@@ -33,7 +33,7 @@ def wse(L, Wt, V, wlbl_values, eta, gamma, lambdas, speedup, optimizer, log_opt)
                 break
             #elif obj[t,0] > obj[t-1,0]:
                 #print('Quitting: obj start increasing')
-               # is_converge = True
+                #is_converge = True
                 #break
 
         # update eta

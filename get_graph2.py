@@ -92,7 +92,7 @@ if nn_opt == 'pdist':
               for i in range(n) ] for j in range(n)], 'f')
 
     graph_type = 'mutual_knn'
-    k = 100   #构建图的最近邻居数
+    k = 300  #构建图的最近邻居数
     isnn = np.ones((n,n))*0
 
     for irow in range(n):              #将距离从小到大排序，选取最小的k个索引在isnn中赋值为1

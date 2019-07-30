@@ -80,6 +80,13 @@ def perturb_labels(labels, psnr):     #污染真实数据得到弱注释数据
             perturbed_labels[idx[perturb_idx[j]]] = perturb_class_ids[j, 0]
     return perturbed_labels
 
+def label_to_couple(labels):    #将标签为3，5，6的变为1，其他为0
+    result_label = np.ones((size(labels), 1))*0
+    for i in range(size(labels)):
+        if labels[i, 0] == 3 or labels[i, 0] == 5 or labels[i, 0] == 6:
+            result_label[i, 0] = 1
+    return result_label
+
 def get_field(config, key, default):   #获取config的值
     if key in config:
         return config[key]
@@ -152,7 +159,7 @@ def plot_sample(feat, label):    #与matlab相似
         class_ind = where(label==class_id)[0]
         xx = feat[class_ind,0]
         yy = feat[class_ind,1]
-        if mean(yy)<0:
+        if mean(yy)<-0.01:
             for j in range(size(xx)):
                 plot(xx[j], yy[j], 'y.')
         else:
