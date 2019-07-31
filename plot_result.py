@@ -38,7 +38,7 @@ wlbl_values = mt.matrix_to_1D(wlbl_values)
 
 class_ids = unique(wlbl_values)
 pro = mt.change_to_matrix(projected)
-
+'''
 figure()
 gray()
 subplot(131)
@@ -48,7 +48,7 @@ mt.plot_sample(pro, CtA[iters-1])
 subplot(133)
 mt.plot_sample(pro, label_value)
 show()
-
+'''
 ol = iters-1
 print(mt.accuracy(wlbl_values, CtA[ol]))
 print(mt.accuracy(wlbl_values, label_value))

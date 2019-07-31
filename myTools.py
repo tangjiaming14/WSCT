@@ -187,3 +187,10 @@ def accuracy(A, B):
             count +=1
     acc = count/num
     return acc
+
+def find_list(list, k): #找出list中所有等于k的值的索引，返回索引列表
+    idx = []
+    for index, value in enumerate(list):
+        if value == k:
+            idx.append(index)
+    return idx
